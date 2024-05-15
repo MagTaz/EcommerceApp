@@ -20,31 +20,24 @@ class _CategoriesCardState extends State<CategoriesCard> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.height;
     return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 10,
-      ),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-          color: widget.ColorOfButton,
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-          boxShadow: [
-            BoxShadow(spreadRadius: 2, blurRadius: 10, color: Colors.black26)
-          ]),
+          border: Border(
+              bottom: BorderSide(
+                  width: 3,
+                  color: widget.ColorOfButton == Colors.white54
+                      ? Colors.transparent
+                      : Colors.white))),
       height: height,
       child: Row(
         children: [
-          widget.IconsOfCard,
-          SizedBox(
-            width: 10,
-          ),
           Text(
             widget.title,
             style: TextStyle(
                 fontFamily: "CairoBold",
-                color: widget.ColorOfButton == Colors.white
-                    ? Colors.black
+                color: widget.ColorOfButton == Colors.white54
+                    ? Colors.white70
                     : Colors.white),
           )
         ],
