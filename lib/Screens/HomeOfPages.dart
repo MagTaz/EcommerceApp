@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/Screens/HomeScreen.dart';
 import 'package:ecommerce_app/Screens/ProfileScreen.dart';
+import 'package:ecommerce_app/Utils/MainColors.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,9 @@ class _HomeOfPagesState extends State<HomeOfPages> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-          fixedColor: Colors.indigo,
+          elevation: 1,
+          selectedIconTheme: IconThemeData(),
+          fixedColor: MainColors.PrimaryColor,
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: <BottomNavigationBarItem>[
