@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:ecommerce_app/Utils/Fonts.dart';
+import 'package:flutter/material.dart';
 
 class Text_Style {
   static textStyleNormal(Color color, double size) {

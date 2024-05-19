@@ -1,14 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
+
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce_app/Model/Product.dart';
+import 'package:ecommerce_app/Services/productsServices.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
+import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:ecommerce_app/widgets/Categories_Card.dart';
 import 'package:ecommerce_app/widgets/PorductCard.dart';
 import 'package:ecommerce_app/widgets/subCategoriesCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -24,29 +31,19 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> Photos = [];
 
   int indexOfPhoto = 0;
+  int activeButton = -1;
 
-  List ColorsOfButtons = [
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-    Colors.white54,
-  ];
   int activeIndex = 0;
   Map<String, dynamic> data = {};
   Map<String, dynamic> banners = {};
   List<dynamic> categories = [];
   List<dynamic> subCategories = [];
-  bool _loading = true;
+  late Future<List<Product>> products;
 
   @override
   void initState() {
     // TODO: implement initState
+
     fetchData();
     fetchBanners();
     super.initState();
@@ -181,11 +178,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             },
                             child: CategoriesCard(
-                              ColorOfButton: ColorsOfButtons[index],
+                              ColorOfButton: activeButton == index
+                                  ? Colors.white
+                                  : Colors.white54,
                               title: categories[index]['categoryNameEn']
                                   .toString(),
                               IconsOfCard: Icon(Icons.directions_run,
-                                  color: ColorsOfButtons[index] == Colors.white
+                                  color: activeButton == index
                                       ? Colors.white
                                       : Colors.white54),
                             ),
@@ -252,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             alignment: Alignment.bottomCenter,
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withOpacity(0.3),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20))),
                               padding: EdgeInsets.all(5),
@@ -270,21 +269,38 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             Expanded(
-                child: Container(
-              color: MainColors.PrimaryColor.withOpacity(0.2),
-              child: GridView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 0),
-                  itemBuilder: (context, index) {
-                    String categoryNameEn =
-                        categories[index]['categoryNameEn'].toString();
-                    return ProductCard(title: categoryNameEn);
-                  }),
-            )),
+              child: Container(
+                child: FutureBuilder(
+                    future: Provider.of<ProductsListViewModel>(context,
+                            listen: false)
+                        .fetchProducts(),
+                    builder: (context, snapshot) {
+                      return Container(
+                        child: MasonryGridView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount:
+                                Provider.of<ProductsListViewModel>(context)
+                                    .productsList
+                                    .length,
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            itemBuilder: (context, index) {
+                              var product =
+                                  Provider.of<ProductsListViewModel>(context)
+                                      .productsList[index];
+
+                              return ProductCard(
+                                title: product.productNameEn,
+                                UrlImage: product.images[0],
+                                index: index,
+                                price: product.price,
+                              );
+                            }),
+                      );
+                    }),
+              ),
+            ),
           ],
         ),
       ],
@@ -307,19 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void changeColorOfButtonn(int index) {
     setState(() {
-      ColorsOfButtons = [
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-        Colors.white54,
-      ];
-      ColorsOfButtons[index] = Colors.white;
+      activeButton = index;
     });
   }
 
@@ -333,14 +337,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse(
         'https://e-commerce-backend-sable.vercel.app/api/v1/admin/category-sub-category'));
-
-    if (response.statusCode == 200) {
-      setState(() {
-        data = json.decode(response.body);
-        categories = data["categories"];
-      });
-    } else {
-      throw Exception('Failed to load data');
+    try {
+      if (response.statusCode == 200) {
+        setState(() {
+          data = json.decode(response.body);
+          categories = data["categories"];
+        });
+      } else {
+        Map<String, dynamic> error = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(error["message"]),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
