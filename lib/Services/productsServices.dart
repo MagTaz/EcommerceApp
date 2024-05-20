@@ -26,16 +26,19 @@ class ProducsApi {
     }
   }
 
-  Future<List<Product>> fetchProductsByCategory(String category) async {
+  Future<List<Product>> fetchProductsByCategory(String categoryId) async {
     try {
-      http.Response response = await http.get(Uri.parse(
-          'https://e-commerce-backend-sable.vercel.app/api/v1/user/product'));
+      http.Response response = await http.get(
+        Uri.parse(
+            'https://e-commerce-backend-sable.vercel.app/api/v1/user/product?categoryId=$categoryId'),
+      );
       if (response.statusCode == 200) {
         String data = response.body;
         var jsonData = jsonDecode(data);
         ProductsList products = ProductsList.fromJson(jsonData);
         List<Product> productsList =
             products.products.map((e) => Product.fromJson(e)).toList();
+
         return productsList;
       } else {
         print(response.statusCode);

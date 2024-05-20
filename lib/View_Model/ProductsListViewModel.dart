@@ -12,8 +12,9 @@ class ProductsListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  fetchProductsByCategory() async {
-    // _products = await ProducsApi().fetchProducts();
+  fetchProductsByCategory(String CategoryId) async {
+    _productsListByCategory =
+        await ProducsApi().fetchProductsByCategory(CategoryId);
     notifyListeners();
   }
 

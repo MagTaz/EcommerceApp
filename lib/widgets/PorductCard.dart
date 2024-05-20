@@ -27,12 +27,11 @@ class _ProductCardState extends State<ProductCard> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 10, bottom: 10, right: 8, left: 8),
+          margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
               boxShadow: [
-                BoxShadow(
-                    blurRadius: 20, spreadRadius: 2, color: Colors.black38)
+                BoxShadow(blurRadius: 5, spreadRadius: 5, color: Colors.black26)
               ],
               color: Colors.grey,
               borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -47,6 +46,7 @@ class _ProductCardState extends State<ProductCard> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
+                      padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           // boxShadow: [
                           //   BoxShadow(
@@ -55,15 +55,19 @@ class _ProductCardState extends State<ProductCard> {
                           //       color: Colors.black45,
                           //       offset: Offset(-2, 2))
                           // ],
-                          color: Colors.orangeAccent.withOpacity(0.6),
+                          color: const Color.fromARGB(255, 164, 74, 0)
+                              .withOpacity(0.7),
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(20))),
                       height: 50,
-                      width: 60,
+                      width: 70,
                       child: Center(
-                        child: Text(
-                          widget.price,
-                          style: Text_Style.textStyleBold(Colors.white, 13),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            widget.price + " SAR",
+                            style: Text_Style.textStyleBold(Colors.white, 13),
+                          ),
                         ),
                       ),
                     ),
@@ -82,7 +86,7 @@ class _ProductCardState extends State<ProductCard> {
                   child: Text(
                     widget.title,
                     textAlign: TextAlign.center,
-                    style: Text_Style.textStyleBold(Colors.white, 18),
+                    style: Text_Style.textStyleBold(Colors.white, 15),
                   ),
                 ),
               )

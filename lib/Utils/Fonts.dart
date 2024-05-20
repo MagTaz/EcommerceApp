@@ -1,4 +1,4 @@
 class Fonts {
-  static String PrimaryFont = "CairoRegular";
+  static String PrimaryFont = "Cairo";
   static String PrimaryBoldFont = "CairoBold";
 }

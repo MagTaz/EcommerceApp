@@ -1,13 +1,11 @@
+import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CategoriesCard extends StatefulWidget {
   const CategoriesCard(
-      {super.key,
-      required this.IconsOfCard,
-      required this.title,
-      required this.ColorOfButton});
-  final Icon IconsOfCard;
+      {super.key, required this.title, required this.ColorOfButton});
+
   final String title;
   final Color ColorOfButton;
   @override
@@ -20,27 +18,29 @@ class _CategoriesCardState extends State<CategoriesCard> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.height;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      padding: EdgeInsets.all(10),
+      clipBehavior: Clip.hardEdge,
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  width: 3,
-                  color: widget.ColorOfButton == Colors.white54
-                      ? Colors.transparent
-                      : Colors.white))),
+          border: Border.all(
+            color: widget.ColorOfButton == Colors.black45
+                ? MainColors.PrimaryColor.withOpacity(0.3)
+                : Colors.transparent,
+          ),
+          color: widget.ColorOfButton == Colors.black45
+              ? Colors.white30
+              : MainColors.PrimaryColor,
+          borderRadius: BorderRadius.all(Radius.circular(25))),
       height: height,
-      child: Row(
-        children: [
-          Text(
-            widget.title,
-            style: TextStyle(
-                fontFamily: "CairoBold",
-                color: widget.ColorOfButton == Colors.white54
-                    ? Colors.white70
-                    : Colors.white),
-          )
-        ],
+      child: Center(
+        child: Text(
+          widget.title,
+          style: TextStyle(
+              fontFamily: "CairoBold",
+              color: widget.ColorOfButton == Colors.black45
+                  ? widget.ColorOfButton
+                  : Colors.white),
+        ),
       ),
     );
   }

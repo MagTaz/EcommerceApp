@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_app/Model/Product.dart';
 import 'package:ecommerce_app/Services/productsServices.dart';
+import 'package:ecommerce_app/Utils/Fonts.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:ecommerce_app/widgets/Categories_Card.dart';
@@ -19,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> Photos = [];
 
   int indexOfPhoto = 0;
-  int activeButton = -1;
+  int activeButton = 3;
 
   int activeIndex = 0;
   Map<String, dynamic> data = {};
@@ -42,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     fetchData();
     fetchBanners();
     super.initState();
@@ -54,272 +54,306 @@ class _HomeScreenState extends State<HomeScreen> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.height;
 
-    return Stack(
-      children: [
-        Stack(
-          children: [
-            Container(
-              height: height / 2.4,
-              child: FutureBuilder(
-                  future: fetchBanners(),
-                  builder: (context, snapshot) {
-                    if (Photos.length == 0) {
-                      return Center(
-                          child: Container(
-                        child: Text(Photos.toString()),
-                      ));
-                    }
-                    return Image.network(
-                      Photos[activeIndex]["image"],
-                      fit: BoxFit.cover,
-                    );
-                  }),
-            ),
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Container(
-                color: Colors.black38,
-                width: double.infinity,
-                height: height / 2.4,
+    return Scaffold(
+      body: banners.isEmpty || categories.isEmpty
+          ? Center(
+              child: SpinKitSpinningLines(
+                color: MainColors.PrimaryColor,
+                size: 60,
               ),
             )
-          ],
-        ),
-        Column(
-          children: [
-            SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.mail,
-                        color: Colors.white,
-                      )),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.date_range,
-                        color: Colors.white,
-                      )),
-                  Expanded(
-                    child: Container(
-                        margin: EdgeInsets.only(top: 10),
-                        height: 40,
-                        child: TextField(
-                          decoration: InputDecoration(
-                              labelText: "Search",
-                              prefixIconColor: Colors.white,
-                              labelStyle: TextStyle(
-                                  fontFamily: "CairoBold",
-                                  fontSize: 15,
-                                  color: Colors.white54),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10)),
-                                  borderSide: BorderSide(color: Colors.white))),
-                        )),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    width: 50,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomRight: Radius.circular(10)),
-                      color: Colors.white,
+          : Stack(
+              children: [
+                Column(
+                  children: [
+                    Column(
+                      children: [
+                        SafeArea(
+                          child: SearchAppBar(),
+                        ),
+                      ],
                     ),
-                    child: Icon(Icons.search),
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.favorite_border_outlined,
-                        color: Colors.white,
-                      ))
-                ],
-              ),
-            ),
-            Container(
-              height: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 5),
-                    // color: Colors.amber,
-                    height: height / 9,
-                    width: width / 2.5,
-                    child: Container(
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categories.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            onTap: () {
-                              changeColorOfButtonn(index);
-                              fetchSubCategoriesData(
-                                  index,
-                                  categories[index]['categoryNameEn']
-                                      .toString());
-                              if (subCategories.length != 0) {
-                                _showModalBottomSheet(
-                                    context,
-                                    categories[index]['categoryNameEn']
-                                        .toString());
-                              }
-                            },
-                            child: CategoriesCard(
-                              ColorOfButton: activeButton == index
-                                  ? Colors.white
-                                  : Colors.white54,
-                              title: categories[index]['categoryNameEn']
-                                  .toString(),
-                              IconsOfCard: Icon(Icons.directions_run,
-                                  color: activeButton == index
-                                      ? Colors.white
-                                      : Colors.white54),
+                    FutureBuilder(
+                      future: fetchBanners(),
+                      builder: (context, snapshot) {
+                        if (Photos.length != 0) {
+                          return Container(
+                            margin: EdgeInsets.all(10),
+                            height: height / 4.5,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            child: Stack(
+                              children: [
+                                CarouselSlider.builder(
+                                    itemCount: Photos.length,
+                                    itemBuilder: (context, index, realIndex) {
+                                      return Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                            child: buildImage(
+                                                Photos[index]["image"]
+                                                    .toString(),
+                                                index)),
+                                      );
+                                    },
+                                    options: CarouselOptions(
+                                      viewportFraction:
+                                          1, // Set viewportFraction to 1.0
+                                      enlargeCenterPage: true,
+                                      height: 1000,
+                                      autoPlay: true,
+
+                                      onPageChanged: (index, reason) =>
+                                          setState(() {
+                                        activeIndex = index;
+                                        indexOfPhoto = activeIndex;
+                                      }),
+                                    )),
+                              ],
                             ),
                           );
-                        },
-                      ),
+                        } else {
+                          return Center(
+                              child: const CircularProgressIndicator());
+                        }
+                      },
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 18, horizontal: 5),
-                    width: 1.2,
-                    color: Colors.white38,
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.list_sharp,
-                        size: 30,
-                        color: Colors.white70,
-                      ))
-                ],
-              ),
-            ),
-            FutureBuilder(
-              future: fetchBanners(),
-              builder: (context, snapshot) {
-                if (Photos.length != 0) {
-                  return Stack(children: [
-                    Container(
-                      height: height / 4.5,
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                          color: Colors.black12,
-                        )
-                      ]),
-                      child: Stack(
-                        children: [
-                          CarouselSlider.builder(
-                              itemCount: Photos.length,
-                              itemBuilder: (context, index, realIndex) {
-                                return Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                      child: buildImage(
-                                          Photos[index]["image"].toString(),
-                                          index)),
-                                );
-                              },
-                              options: CarouselOptions(
-                                viewportFraction:
-                                    1, // Set viewportFraction to 1.0
-                                enlargeCenterPage: true,
-                                height: 1000,
-                                autoPlay: true,
-
-                                onPageChanged: (index, reason) => setState(() {
-                                  activeIndex = index;
-                                  indexOfPhoto = activeIndex;
-                                }),
-                              )),
-                          Align(
-                            alignment: Alignment.bottomCenter,
+                    CategoriesBar(width),
+                    activeButton > 0
+                        ? Expanded(
                             child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.3),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              padding: EdgeInsets.all(5),
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: buildIndicator(Photos.length),
+                              child: FutureBuilder(
+                                  future: Provider.of<ProductsListViewModel>(
+                                          context,
+                                          listen: false)
+                                      .fetchProductsByCategory(
+                                          categories[activeButton - 1]["_id"]),
+                                  builder: (context, snapshot) {
+                                    return Container(
+                                      child: MasonryGridView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: Provider.of<
+                                                      ProductsListViewModel>(
+                                                  context)
+                                              .productsListByCategory
+                                              .length,
+                                          gridDelegate:
+                                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2),
+                                          itemBuilder: (context, index) {
+                                            var product = Provider.of<
+                                                        ProductsListViewModel>(
+                                                    context)
+                                                .productsListByCategory[index];
+
+                                            return ProductCard(
+                                              title: product.productNameEn,
+                                              UrlImage: product.images[0],
+                                              index: index,
+                                              price: product.price,
+                                            );
+                                          }),
+                                    );
+                                  }),
+                            ),
+                          )
+                        : Expanded(
+                            child: Container(
+                              child: FutureBuilder(
+                                  future: Provider.of<ProductsListViewModel>(
+                                          context,
+                                          listen: false)
+                                      .fetchProducts(),
+                                  builder: (context, snapshot) {
+                                    return Container(
+                                      child: MasonryGridView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: Provider.of<
+                                                      ProductsListViewModel>(
+                                                  context)
+                                              .productsList
+                                              .length,
+                                          gridDelegate:
+                                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2),
+                                          itemBuilder: (context, index) {
+                                            var product = Provider.of<
+                                                        ProductsListViewModel>(
+                                                    context)
+                                                .productsList[index];
+
+                                            return ProductCard(
+                                              title: product.productNameEn,
+                                              UrlImage: product.images[0],
+                                              index: index,
+                                              price: product.price,
+                                            );
+                                          }),
+                                    );
+                                  }),
                             ),
                           ),
-                        ],
-                      ),
+                  ],
+                ),
+              ],
+            ),
+    );
+  }
+
+  Container CategoriesBar(double width) {
+    return Container(
+      height: 80,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            width: width / 2.5,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: categories.length + 1,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 0) {
+                  return InkWell(
+                    onTap: () {
+                      changeColorOfButtonn(index);
+                    },
+                    child: CategoriesCard(
+                      ColorOfButton:
+                          activeButton == index ? Colors.white : Colors.black45,
+                      title: "All",
                     ),
-                  ]);
+                  );
                 } else {
-                  return const CircularProgressIndicator();
+                  int categoryIndex = index - 1;
+                  return InkWell(
+                    onTap: () {
+                      changeColorOfButtonn(index);
+                      fetchSubCategoriesData(
+                          categoryIndex,
+                          categories[categoryIndex]['categoryNameEn']
+                              .toString());
+                      if (subCategories.length != 0) {
+                        _showModalBottomSheet(
+                            context,
+                            categories[categoryIndex]['categoryNameEn']
+                                .toString());
+                      }
+                    },
+                    child: CategoriesCard(
+                      ColorOfButton:
+                          activeButton == index ? Colors.white : Colors.black45,
+                      title: categories[categoryIndex]['categoryNameEn']
+                          .toString(),
+                    ),
+                  );
                 }
               },
             ),
-            Expanded(
-              child: Container(
-                child: FutureBuilder(
-                    future: Provider.of<ProductsListViewModel>(context,
-                            listen: false)
-                        .fetchProducts(),
-                    builder: (context, snapshot) {
-                      return Container(
-                        child: MasonryGridView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount:
-                                Provider.of<ProductsListViewModel>(context)
-                                    .productsList
-                                    .length,
-                            gridDelegate:
-                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            itemBuilder: (context, index) {
-                              var product =
-                                  Provider.of<ProductsListViewModel>(context)
-                                      .productsList[index];
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 9, horizontal: 2),
+            width: 1.2,
+            color: MainColors.PrimaryColor,
+          ),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.list_sharp,
+                size: 30,
+                color: MainColors.PrimaryColor,
+              ))
+        ],
+      ),
+    );
+  }
 
-                              return ProductCard(
-                                title: product.productNameEn,
-                                UrlImage: product.images[0],
-                                index: index,
-                                price: product.price,
-                              );
-                            }),
-                      );
-                    }),
-              ),
-            ),
-          ],
+  Row SearchAppBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.mail,
+              color: MainColors.PrimaryColor,
+            )),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.date_range,
+              color: MainColors.PrimaryColor,
+            )),
+        Expanded(
+          child: Container(
+              margin: EdgeInsets.only(top: 10),
+              height: 40,
+              child: TextField(
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black.withOpacity(0.7),
+                    fontFamily: Fonts.PrimaryFont),
+                decoration: InputDecoration(
+                    labelText: "Search",
+                    prefixIconColor: Colors.white,
+                    labelStyle: TextStyle(
+                      fontFamily: "CairoBold",
+                      fontSize: 13,
+                      color: MainColors.PrimaryColor.withOpacity(0.2),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10)),
+                        borderSide: BorderSide(
+                          color: MainColors.PrimaryColor,
+                        ))),
+              )),
         ),
+        Container(
+          margin: EdgeInsets.only(top: 10),
+          width: 50,
+          height: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10),
+                bottomRight: Radius.circular(10)),
+            color: MainColors.PrimaryColor,
+          ),
+          child: Icon(
+            Icons.search,
+            color: Colors.white,
+          ),
+        ),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.favorite_border_outlined,
+              color: MainColors.PrimaryColor,
+            ))
       ],
     );
   }
 
-  Widget buildIndicator(int length) {
-    return AnimatedSmoothIndicator(
-      activeIndex: activeIndex,
-      count: length,
-      effect: WormEffect(
-        activeDotColor: Colors.blue,
-        dotColor: Colors.grey,
-        dotHeight: 5,
-        dotWidth: 5,
-        spacing: 5,
-      ),
-    );
-  }
+  // Widget buildIndicator(int length) {
+  //   return AnimatedSmoothIndicator(
+  //     activeIndex: activeIndex,
+  //     count: length,
+  //     effect: WormEffect(
+  //       activeDotColor: Colors.blue,
+  //       dotColor: Colors.grey,
+  //       dotHeight: 5,
+  //       dotWidth: 5,
+  //       spacing: 5,
+  //     ),
+  //   );
+  // }
 
   void changeColorOfButtonn(int index) {
     setState(() {
@@ -328,9 +362,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildImage(urlimage, int index) {
-    return Image.network(
-      urlimage,
-      fit: BoxFit.fitWidth,
+    return Container(
+      padding: EdgeInsets.all(15),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(blurRadius: 10, spreadRadius: 5, color: Colors.black26)
+          ],
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Image.network(
+              urlimage,
+              fit: BoxFit.fitWidth,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -360,15 +412,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Future fetchBanners() async {
     final responseOfBanners = await http.get(Uri.parse(
         'https://e-commerce-backend-sable.vercel.app/api/v1/user/banner'));
-    if (responseOfBanners.statusCode == 200) {
-      setState(() {
-        banners = json.decode(responseOfBanners.body);
-        Photos = banners["result"];
-      });
-    } else {
-      throw Exception('Failed to load data');
+    try {
+      if (responseOfBanners.statusCode == 200) {
+        setState(() {
+          banners = json.decode(responseOfBanners.body);
+          Photos = banners["result"];
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+      return banners["result"];
+    } catch (e) {
+      Map<String, dynamic> error = json.decode(responseOfBanners.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(error["message"]),
+        ),
+      );
     }
-    return banners["result"];
   }
 
   Future<void> fetchSubCategoriesData(int index, String Category) async {
