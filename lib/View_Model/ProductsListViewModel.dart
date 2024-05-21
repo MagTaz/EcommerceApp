@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 class ProductsListViewModel extends ChangeNotifier {
   List<Product> _productsList = [];
-  List<Product> _productsListByCategory = [];
 
   Future fetchProducts() async {
     _productsList = await ProducsApi().fetchProducts();
@@ -13,11 +12,15 @@ class ProductsListViewModel extends ChangeNotifier {
   }
 
   fetchProductsByCategory(String CategoryId) async {
-    _productsListByCategory =
-        await ProducsApi().fetchProductsByCategory(CategoryId);
+    _productsList = await ProducsApi().fetchProductsByCategory(CategoryId);
+    notifyListeners();
+  }
+
+  fetchProductsBySubCategory(String subCategoryId) async {
+    _productsList =
+        await ProducsApi().fetchProductsBySubCategory(subCategoryId);
     notifyListeners();
   }
 
   List<Product> get productsList => _productsList;
-  List<Product> get productsListByCategory => _productsListByCategory;
 }

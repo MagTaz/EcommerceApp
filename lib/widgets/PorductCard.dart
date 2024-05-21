@@ -37,42 +37,38 @@ class _ProductCardState extends State<ProductCard> {
               borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Column(
             children: [
-              Stack(
-                children: [
-                  Image.network(
-                    widget.UrlImage,
-                    fit: BoxFit.cover,
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //       blurRadius: 5,
-                          //       spreadRadius: 2,
-                          //       color: Colors.black45,
-                          //       offset: Offset(-2, 2))
-                          // ],
-                          color: const Color.fromARGB(255, 164, 74, 0)
-                              .withOpacity(0.7),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(20))),
-                      height: 50,
-                      width: 70,
-                      child: Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            widget.price + " SAR",
-                            style: Text_Style.textStyleBold(Colors.white, 13),
+              Container(
+                height: 255,
+                child: Stack(
+                  children: [
+                    Image.network(
+                      widget.UrlImage,
+                      fit: BoxFit.cover,
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 164, 74, 0)
+                                .withOpacity(0.7),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20))),
+                        height: 50,
+                        width: 70,
+                        child: Center(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              widget.price + " SAR",
+                              style: Text_Style.textStyleBold(Colors.white, 13),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
               Container(
                 padding: EdgeInsets.all(10),

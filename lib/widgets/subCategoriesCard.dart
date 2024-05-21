@@ -1,9 +1,12 @@
+import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SubCategoriesCard extends StatefulWidget {
-  const SubCategoriesCard({super.key, required this.title});
+  const SubCategoriesCard(
+      {super.key, required this.title, required this.ColorOfButton});
   final String title;
+  final Color ColorOfButton;
   @override
   State<SubCategoriesCard> createState() => _SubCategoriesCardState();
 }
@@ -11,21 +14,32 @@ class SubCategoriesCard extends StatefulWidget {
 class _SubCategoriesCardState extends State<SubCategoriesCard> {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Container(
-      margin: EdgeInsets.only(top: 20, bottom: 20, right: 10, left: 10),
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      clipBehavior: Clip.hardEdge,
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(blurRadius: 10, spreadRadius: 1, color: Colors.black26)
-          ]),
+          border: Border.all(
+            color: widget.ColorOfButton == Colors.black45
+                ? MainColors.PrimaryColor.withOpacity(0.3)
+                : Colors.transparent,
+          ),
+          color: widget.ColorOfButton == Colors.black45
+              ? Colors.white30
+              : MainColors.PrimaryColor,
+          borderRadius: BorderRadius.all(Radius.circular(25))),
+      height: height,
       child: Center(
-          child: Text(
-        widget.title,
-        style: TextStyle(
-            fontFamily: "CairoBold", color: Color.fromARGB(255, 13, 142, 171)),
-      )),
+        child: Text(
+          widget.title,
+          style: TextStyle(
+              fontFamily: "CairoBold",
+              color: widget.ColorOfButton == Colors.black45
+                  ? widget.ColorOfButton
+                  : Colors.white),
+        ),
+      ),
     );
   }
 }

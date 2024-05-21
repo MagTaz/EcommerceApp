@@ -1,25 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'dart:ui';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_app/Model/Product.dart';
-import 'package:ecommerce_app/Services/productsServices.dart';
 import 'package:ecommerce_app/Utils/Fonts.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
+import 'package:ecommerce_app/Utils/Text_Style.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:ecommerce_app/widgets/Categories_Card.dart';
+import 'package:ecommerce_app/widgets/EmptyProducsAnimationWidget.dart';
 import 'package:ecommerce_app/widgets/PorductCard.dart';
 import 'package:ecommerce_app/widgets/subCategoriesCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
-import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,10 +29,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> Photos = [];
-
+  late Future _futureProducts;
   int indexOfPhoto = 0;
-  int activeButton = 3;
-
+  int activeButton = 0;
+  int activeSubButton = 0;
   int activeIndex = 0;
   Map<String, dynamic> data = {};
   Map<String, dynamic> banners = {};
@@ -44,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    _futureProducts = Provider.of<ProductsListViewModel>(context, listen: false)
+        .fetchProducts();
     fetchData();
     fetchBanners();
     super.initState();
@@ -98,12 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                     options: CarouselOptions(
-                                      viewportFraction:
-                                          1, // Set viewportFraction to 1.0
+                                      viewportFraction: 1,
                                       enlargeCenterPage: true,
                                       height: 1000,
                                       autoPlay: true,
-
                                       onPageChanged: (index, reason) =>
                                           setState(() {
                                         activeIndex = index;
@@ -120,80 +118,53 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     CategoriesBar(width),
-                    activeButton > 0
-                        ? Expanded(
-                            child: Container(
-                              child: FutureBuilder(
-                                  future: Provider.of<ProductsListViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchProductsByCategory(
-                                          categories[activeButton - 1]["_id"]),
-                                  builder: (context, snapshot) {
-                                    return Container(
-                                      child: MasonryGridView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: Provider.of<
-                                                      ProductsListViewModel>(
+                    Expanded(
+                      child: Container(
+                        child: FutureBuilder(
+                            future: _futureProducts,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: SpinKitSpinningLines(
+                                    color: MainColors.PrimaryColor,
+                                    size: 60,
+                                  ),
+                                );
+                              }
+                              if (Provider.of<ProductsListViewModel>(context)
+                                  .productsList
+                                  .isEmpty) {
+                                return EmptyProductsAnimationWidget();
+                              }
+                              return Container(
+                                child: MasonryGridView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    itemCount:
+                                        Provider.of<ProductsListViewModel>(
+                                                context)
+                                            .productsList
+                                            .length,
+                                    gridDelegate:
+                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2),
+                                    itemBuilder: (context, index) {
+                                      var product =
+                                          Provider.of<ProductsListViewModel>(
                                                   context)
-                                              .productsListByCategory
-                                              .length,
-                                          gridDelegate:
-                                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 2),
-                                          itemBuilder: (context, index) {
-                                            var product = Provider.of<
-                                                        ProductsListViewModel>(
-                                                    context)
-                                                .productsListByCategory[index];
+                                              .productsList[index];
 
-                                            return ProductCard(
-                                              title: product.productNameEn,
-                                              UrlImage: product.images[0],
-                                              index: index,
-                                              price: product.price,
-                                            );
-                                          }),
-                                    );
-                                  }),
-                            ),
-                          )
-                        : Expanded(
-                            child: Container(
-                              child: FutureBuilder(
-                                  future: Provider.of<ProductsListViewModel>(
-                                          context,
-                                          listen: false)
-                                      .fetchProducts(),
-                                  builder: (context, snapshot) {
-                                    return Container(
-                                      child: MasonryGridView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: Provider.of<
-                                                      ProductsListViewModel>(
-                                                  context)
-                                              .productsList
-                                              .length,
-                                          gridDelegate:
-                                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 2),
-                                          itemBuilder: (context, index) {
-                                            var product = Provider.of<
-                                                        ProductsListViewModel>(
-                                                    context)
-                                                .productsList[index];
-
-                                            return ProductCard(
-                                              title: product.productNameEn,
-                                              UrlImage: product.images[0],
-                                              index: index,
-                                              price: product.price,
-                                            );
-                                          }),
-                                    );
-                                  }),
-                            ),
-                          ),
+                                      return ProductCard(
+                                        title: product.productNameEn,
+                                        UrlImage: product.images[0],
+                                        index: index,
+                                        price: product.price,
+                                      );
+                                    }),
+                              );
+                            }),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -217,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (index == 0) {
                   return InkWell(
                     onTap: () {
+                      changeProductsList(index, "");
                       changeColorOfButtonn(index);
                     },
                     child: CategoriesCard(
@@ -229,7 +201,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   int categoryIndex = index - 1;
                   return InkWell(
                     onTap: () {
+                      if (activeButton != index) {
+                        changeProductsList(
+                            index, categories[categoryIndex]["_id"]);
+                        setState(() {
+                          activeSubButton = 0;
+                        });
+                      }
                       changeColorOfButtonn(index);
+
                       fetchSubCategoriesData(
                           categoryIndex,
                           categories[categoryIndex]['categoryNameEn']
@@ -238,7 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         _showModalBottomSheet(
                             context,
                             categories[categoryIndex]['categoryNameEn']
-                                .toString());
+                                .toString(),
+                            index);
                       }
                     },
                     child: CategoriesCard(
@@ -361,6 +342,44 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void changeColorOfSubButtonn(int index) {
+    setState(() {
+      activeSubButton = index;
+    });
+  }
+
+  void changeProductsList(int index, String categoryId) {
+    if (index == 0) {
+      setState(() {
+        _futureProducts =
+            Provider.of<ProductsListViewModel>(context, listen: false)
+                .fetchProducts();
+      });
+    } else {
+      setState(() {
+        _futureProducts =
+            Provider.of<ProductsListViewModel>(context, listen: false)
+                .fetchProductsByCategory(categoryId);
+      });
+    }
+  }
+
+  void changeProductsListFromSubCatogery(int index, String subCategoryId) {
+    if (index == 0) {
+      setState(() {
+        _futureProducts =
+            Provider.of<ProductsListViewModel>(context, listen: false)
+                .fetchProductsBySubCategory(subCategoryId);
+      });
+    } else {
+      setState(() {
+        _futureProducts =
+            Provider.of<ProductsListViewModel>(context, listen: false)
+                .fetchProductsBySubCategory(subCategoryId);
+      });
+    }
+  }
+
   Widget buildImage(urlimage, int index) {
     return Container(
       padding: EdgeInsets.all(15),
@@ -437,7 +456,8 @@ class _HomeScreenState extends State<HomeScreen> {
     subCategories = data["categories"][index]["CategorywithsubCategories"];
   }
 
-  void _showModalBottomSheet(BuildContext context, String Category) {
+  void _showModalBottomSheet(
+      BuildContext context, String Category, int CatogeryIndex) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -455,18 +475,42 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 height: 100,
-                padding: EdgeInsets.symmetric(vertical: 5),
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: Container(
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: subCategories.length,
+                    itemCount: subCategories.length + 1,
                     itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        onTap: () {},
-                        child: SubCategoriesCard(
-                          title: subCategories[index]["subCategoryNameEn"],
-                        ),
-                      );
+                      return index == 0
+                          ? InkWell(
+                              onTap: () {
+                                changeProductsList(index + 1,
+                                    categories[CatogeryIndex - 1]["_id"]);
+                                changeColorOfSubButtonn(index);
+                                Navigator.pop(context);
+                              },
+                              child: SubCategoriesCard(
+                                title: "All",
+                                ColorOfButton: index == activeSubButton
+                                    ? MainColors.PrimaryColor
+                                    : Colors.black45,
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                changeProductsListFromSubCatogery(
+                                    index, subCategories[index - 1]["_id"]);
+                                changeColorOfSubButtonn(index);
+                                Navigator.pop(context);
+                              },
+                              child: SubCategoriesCard(
+                                title: subCategories[index == 0 ? 0 : index - 1]
+                                    ["subCategoryNameEn"],
+                                ColorOfButton: index == activeSubButton
+                                    ? MainColors.PrimaryColor
+                                    : Colors.black45,
+                              ),
+                            );
                     },
                   ),
                 ),
