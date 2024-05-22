@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       viewportFraction: 1,
                                       enlargeCenterPage: true,
                                       height: 1000,
-                                      autoPlay: true,
+                                      autoPlay: Photos.isEmpty,
                                       onPageChanged: (index, reason) =>
                                           setState(() {
                                         activeIndex = index;
@@ -157,8 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return ProductCard(
                                         title: product.productNameEn,
                                         UrlImage: product.images[0],
+                                        ImagesList: product.images,
                                         index: index,
                                         price: product.price,
+                                        productDetails: product,
                                       );
                                     }),
                               );

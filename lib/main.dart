@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:ecommerce_app/Screens/HomeOfPages.dart';
+import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: MainColors.PrimaryColor,
       debugShowCheckedModeBanner: false,
       home: Center(child: const MyHomePage(title: 'Home')),
     );

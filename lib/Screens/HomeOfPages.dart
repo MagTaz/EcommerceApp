@@ -1,7 +1,7 @@
 import 'package:ecommerce_app/Screens/HomeScreen.dart';
 import 'package:ecommerce_app/Screens/ProfileScreen.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
-
+import 'package:iconsax/iconsax.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,32 +15,44 @@ class HomeOfPages extends StatefulWidget {
 class _HomeOfPagesState extends State<HomeOfPages> {
   int _selectedIndex = 0;
 
-  List Pages = [HomeScreen(), ProfileScreen()];
+  List Pages = [const HomeScreen(), const ProfileScreen()];
   int indexOfPhoto = 0;
   int activeIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 1,
-          selectedIconTheme: IconThemeData(),
-          fixedColor: MainColors.PrimaryColor,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              activeIcon: Icon(Icons.home),
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
+        bottomNavigationBar: NavigationBar(
+          height: 70,
+          backgroundColor: Colors.white,
+          indicatorColor: MainColors.PrimaryColor.withOpacity(0.6),
+          selectedIndex: activeIndex,
+          onDestinationSelected: _onItemTapped,
+          shadowColor: Colors.black,
+          elevation: 30,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(
+                Iconsax.shop,
+                color: Colors.black,
+              ),
+              label: "Shop",
+              selectedIcon: Icon(
+                Iconsax.shop5,
+                color: Colors.white,
+              ),
             ),
-            BottomNavigationBarItem(
-              activeIcon: Icon(Icons.search_outlined),
-              icon: Icon(Icons.search_rounded),
-              label: 'Search',
+            NavigationDestination(
+              icon: Icon(Iconsax.user),
+              label: "Profile",
+              selectedIcon: Icon(
+                Iconsax.user,
+                color: Colors.white,
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
+            NavigationDestination(
+              icon: Icon(Iconsax.setting_2),
+              label: "Settings",
+              selectedIcon: Icon(Iconsax.setting),
             ),
           ],
         ),
@@ -49,6 +61,7 @@ class _HomeOfPagesState extends State<HomeOfPages> {
 
   void _onItemTapped(int index) {
     setState(() {
+      activeIndex = index;
       _selectedIndex = index;
     });
   }
