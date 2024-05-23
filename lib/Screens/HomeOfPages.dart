@@ -42,6 +42,14 @@ class _HomeOfPagesState extends State<HomeOfPages> {
               ),
             ),
             NavigationDestination(
+              icon: Icon(Iconsax.shopping_cart),
+              label: "Cart",
+              selectedIcon: Icon(
+                Iconsax.shopping_cart5,
+                color: Colors.white,
+              ),
+            ),
+            NavigationDestination(
               icon: Icon(Iconsax.user),
               label: "Profile",
               selectedIcon: Icon(

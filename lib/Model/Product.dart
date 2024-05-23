@@ -9,7 +9,7 @@ class Product {
   final bool isProductVariable;
   final String productId;
   final String productDescriptionEn;
-  final List productSize;
+  final List productVariable;
 
   Product(
       {required this.productNameAr,
@@ -20,7 +20,7 @@ class Product {
       required this.isProductVariable,
       required this.productId,
       required this.productDescriptionEn,
-      required this.productSize});
+      required this.productVariable});
 
   factory Product.fromJson(Map<String, dynamic> jsonData) {
     return Product(
@@ -32,6 +32,6 @@ class Product {
         isProductVariable: jsonData["isProductVariable"],
         productId: jsonData["_id"],
         productDescriptionEn: jsonData["productDescriptionEn"],
-        productSize: jsonData["productVariable"]);
+        productVariable: jsonData["productVariable"]);
   }
 }

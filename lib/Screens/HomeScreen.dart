@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _futureProducts = Provider.of<ProductsListViewModel>(context, listen: false)
         .fetchProducts();
     fetchData();
-    fetchBanners();
+    fetchBanners(context);
     super.initState();
   }
 
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     FutureBuilder(
-                      future: fetchBanners(),
+                      future: fetchBanners(context),
                       builder: (context, snapshot) {
                         if (Photos.length != 0) {
                           return Container(
@@ -430,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future fetchBanners() async {
+  Future fetchBanners(BuildContext context) async {
     final responseOfBanners = await http.get(Uri.parse(
         'https://e-commerce-backend-sable.vercel.app/api/v1/user/banner'));
     try {

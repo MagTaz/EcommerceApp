@@ -43,6 +43,7 @@ class _ProductCardState extends State<ProductCard> {
               images: widget.ImagesList,
               id: widget.productDetails.productId,
               description: widget.productDetails.productDescriptionEn,
+              productVariable: widget.productDetails.productVariable,
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {

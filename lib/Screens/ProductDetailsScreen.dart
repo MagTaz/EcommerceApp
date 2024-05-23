@@ -3,6 +3,7 @@ import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/Utils/Text_Style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class ProductDetailsScreen extends StatefulWidget {
     required this.price,
     required this.id,
     required this.description,
+    required this.productVariable,
   });
 
   final String title;
@@ -20,19 +22,24 @@ class ProductDetailsScreen extends StatefulWidget {
   final String price;
   final String id;
   final String description;
+  final List productVariable;
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  int _selectedSize = -1;
+  int _selectedColor = -1;
   int activeIndex = 0;
+  List productColorsList = [];
   final CarouselController _carouselController = CarouselController();
   @override
   Widget build(BuildContext context) {
     List Photos = widget.images;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -67,7 +74,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         viewportFraction: 1.0,
                         enlargeCenterPage: true,
                         height: 900,
-                        autoPlay: true,
+                        autoPlay: false,
                         onPageChanged: (index, reason) => setState(() {
                           activeIndex = index;
                         }),
@@ -90,135 +97,346 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           SizedBox(
             height: 12,
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black54,
-                          spreadRadius: 10,
-                          blurRadius: 20)
-                    ],
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30))),
-                width: width,
-                height: height - (height / 2) + 40,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      width: width,
-                      height: 70,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: widget.images.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Stack(
-                              children: [
-                                InkResponse(
-                                  onTap: () {
-                                    setState(() {
-                                      activeIndex = index;
-                                      _carouselController.jumpToPage(index);
-                                    });
+          Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.55,
+                  minChildSize: 0.55,
+                  maxChildSize: 1.0,
+                  builder: (BuildContext context,
+                      ScrollController scrollController) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black38,
+                            spreadRadius: 5,
+                            blurRadius: 20,
+                          ),
+                        ],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      padding: EdgeInsets.all(20),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: width,
+                              height: 70,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: widget.images.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Stack(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(8),
+                                          margin: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: MainColors.PrimaryColor,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                          ),
+                                          height: 50,
+                                          width: 50,
+                                          child: Center(
+                                            child: SpinKitSpinningLines(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        InkResponse(
+                                          onTap: () {
+                                            setState(() {
+                                              activeIndex = index;
+                                              _carouselController
+                                                  .jumpToPage(index);
+                                            });
+                                          },
+                                          child: Container(
+                                            clipBehavior: Clip.hardEdge,
+                                            margin: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  blurRadius: 3,
+                                                  spreadRadius: 1,
+                                                  color: Colors.black26,
+                                                ),
+                                              ],
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10),
+                                              ),
+                                            ),
+                                            height: 50,
+                                            width: 50,
+                                            child: Image.network(
+                                              Photos[index],
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        if (index == activeIndex)
+                                          Container(
+                                            margin: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: MainColors.PrimaryColor
+                                                  .withOpacity(0.3),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10),
+                                              ),
+                                            ),
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                      ],
+                                    );
                                   },
-                                  child: Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    margin: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                              blurRadius: 3,
-                                              spreadRadius: 1,
-                                              color: Colors.black26)
-                                        ],
-                                        color: MainColors.PrimaryColor,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    height: 50,
-                                    width: 50,
-                                    child: Image.network(
-                                      Photos[index],
-                                      fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  width: width / 2,
+                                  child: Text(
+                                    widget.title,
+                                    style: Text_Style.textStyleBold(
+                                        Colors.black, 25),
+                                  ),
+                                ),
+                                Spacer(),
+                                Container(
+                                  width: 80,
+                                  margin: EdgeInsets.all(20),
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        widget.price + " \$",
+                                        style: Text_Style.textStyleBold(
+                                          MainColors.PrimaryColor,
+                                          25,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                if (index == activeIndex)
-                                  Container(
-                                    margin: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        color:
-                                            MainColors.PrimaryColor.withOpacity(
-                                                0.3),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    height: 50,
-                                    width: 50,
-                                  ),
                               ],
-                            );
-                          },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(right: 20),
+                              child: Text(
+                                widget.description,
+                                style: Text_Style.textStyleBold(
+                                  Colors.black.withOpacity(0.7),
+                                  15,
+                                ),
+                              ),
+                            ),
+                            if (widget.productVariable[0].containsKey("size"))
+                              buildSizeBar(width),
+                            if (widget.productVariable[0]
+                                    .containsKey("color") ||
+                                (widget.productVariable[0]
+                                        .containsKey("size") &&
+                                    widget.productVariable[0]
+                                        .containsKey("color")))
+                              buildColorsBar(width)
+                          ],
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: width / 2,
-                          child: Text(
-                            widget.title,
-                            style: Text_Style.textStyleBold(Colors.black, 25),
-                          ),
-                        ),
-                        Spacer(),
-                        Container(
-                          margin: EdgeInsets.all(20),
-                          child: Text(
-                            widget.price + " \$",
-                            style: Text_Style.textStyleBold(
-                                MainColors.PrimaryColor, 25),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          padding: EdgeInsets.only(right: 20),
-                          child: Text(
-                            widget.description,
-                            style: Text_Style.textStyleBold(
-                                Colors.black.withOpacity(0.7), 15),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Container buildColorsBar(
+    double width,
+  ) {
+    if (!widget.productVariable[0].containsKey("size")) {
+      changeColors();
+    }
+    print("trueeeedsfasdfa");
+
+    return Container(
+      margin: EdgeInsets.only(
+        top: 10,
+      ),
+      width: width,
+      height: 70,
+      child: Align(
+        alignment: Alignment.center,
+        child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: productColorsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Stack(
+              children: [
+                InkResponse(
+                  onTap: () {
+                    setState(() {
+                      _selectedColor = index;
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        clipBehavior: Clip.hardEdge,
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: getColorFromString(productColorsList[index]),
+                          boxShadow: _selectedColor == index
+                              ? [
+                                  BoxShadow(
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    color: Colors.black26,
+                                  ),
+                                ]
+                              : [],
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        height: 50,
+                        width: 50,
+                        child: Center(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              productColorsList[index].toString().toUpperCase(),
+                              style: Text_Style.textStyleBold(Colors.white, 20),
+                            ),
+                          ),
+                        ),
+                      ),
+                      AnimatedSwitcher(
+                        duration: Duration(milliseconds: 500),
+                        child: _selectedColor == index
+                            ? Container(
+                                margin: EdgeInsets.only(top: 5),
+                                key: ValueKey<int>(index),
+                                height: 5,
+                                width: 50,
+                                color: getColorFromString(
+                                    productColorsList[index]),
+                              )
+                            : Container(
+                                key: ValueKey<int>(-1),
+                                height: 5,
+                                width: 50,
+                                color: Colors.transparent,
+                              ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Container buildSizeBar(
+    double width,
+  ) {
+    return Container(
+      margin: EdgeInsets.only(
+        top: 10,
+      ),
+      width: width,
+      height: 55,
+      child: Align(
+        alignment: Alignment.center,
+        child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: widget.productVariable.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Stack(
+              children: [
+                InkResponse(
+                  onTap: () {
+                    setState(() {
+                      changeColorWithSize(
+                          widget.productVariable[index]["size"]);
+                      _selectedSize = index;
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        clipBehavior: Clip.hardEdge,
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: _selectedSize == index
+                              ? MainColors.PrimaryColor
+                              : MainColors.PrimaryColor.withOpacity(0.3),
+                          boxShadow: _selectedSize == index
+                              ? [
+                                  BoxShadow(
+                                    blurRadius: 3,
+                                    spreadRadius: 1,
+                                    color: Colors.black26,
+                                  ),
+                                ]
+                              : [],
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                        height: 50,
+                        width: 50,
+                        child: Center(
+                          child: Text(
+                            widget.productVariable[index]["size"]
+                                .toString()
+                                .replaceAll("uk", "")
+                                .toUpperCase(),
+                            style: Text_Style.textStyleBold(Colors.white, 20),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -248,5 +466,41 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         spacing: 8,
       ),
     );
+  }
+
+  void changeColors() {
+    productColorsList = [];
+    for (int i = 0; i < widget.productVariable.length; i++) {
+      if (!productColorsList.contains(widget.productVariable[i]["color"])) {
+        productColorsList.add(widget.productVariable[i]["color"]);
+      }
+    }
+  }
+
+  void changeColorWithSize(String size) {
+    productColorsList = [];
+    for (int i = 0; i < widget.productVariable.length; i++) {
+      if (widget.productVariable[i]["size"] == size) {
+        productColorsList.add(widget.productVariable[i]["color"]);
+      }
+    }
+  }
+
+  Color getColorFromString(String colorName) {
+    colorName = colorName.toLowerCase();
+    Map<String, Color> colorMap = {
+      'red': Colors.red,
+      'green': Colors.green,
+      'blue': Colors.blue,
+      'pink': Colors.pink,
+      'purple': Colors.purple,
+      'yellow': Colors.yellow
+    };
+
+    if (colorMap.containsKey(colorName)) {
+      return colorMap[colorName]!;
+    } else {
+      return Colors.black;
+    }
   }
 }
