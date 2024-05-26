@@ -4,6 +4,7 @@ import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/Utils/Text_Style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class ProductCard extends StatefulWidget {
@@ -15,6 +16,7 @@ class ProductCard extends StatefulWidget {
     required this.price,
     required this.ImagesList,
     required this.productDetails,
+    required this.categoryId,
   });
   final String title;
   final String UrlImage;
@@ -22,6 +24,7 @@ class ProductCard extends StatefulWidget {
   final String price;
   final List ImagesList;
   final Product productDetails;
+  final String categoryId;
   @override
   State<ProductCard> createState() => _ProductCardState();
 }
@@ -44,6 +47,7 @@ class _ProductCardState extends State<ProductCard> {
               id: widget.productDetails.productId,
               description: widget.productDetails.productDescriptionEn,
               productVariable: widget.productDetails.productVariable,
+              categoryId: widget.categoryId,
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -85,19 +89,24 @@ class _ProductCardState extends State<ProductCard> {
                   height: 255,
                   child: Stack(
                     children: [
-                      Image.network(
-                        widget.UrlImage,
-                        fit: BoxFit.cover,
+                      Container(
+                        height: 255,
+                        child: Image.network(
+                          widget.UrlImage,
+                          fit: BoxFit.cover, // Change this to BoxFit.fill
+                        ),
                       ),
                       Align(
                         alignment: Alignment.topRight,
                         child: Container(
                           padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 164, 74, 0)
-                                  .withOpacity(0.7),
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(20))),
+                            color: const Color.fromARGB(255, 164, 74, 0)
+                                .withOpacity(0.7),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                            ),
+                          ),
                           height: 50,
                           width: 70,
                           child: Center(
@@ -111,7 +120,7 @@ class _ProductCardState extends State<ProductCard> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

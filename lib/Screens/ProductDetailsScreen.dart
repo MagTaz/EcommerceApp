@@ -1,9 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/Utils/Text_Style.dart';
+import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
+import 'package:ecommerce_app/widgets/PorductCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -15,6 +21,7 @@ class ProductDetailsScreen extends StatefulWidget {
     required this.id,
     required this.description,
     required this.productVariable,
+    required this.categoryId,
   });
 
   final String title;
@@ -23,6 +30,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final String id;
   final String description;
   final List productVariable;
+  final String categoryId;
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
@@ -33,7 +41,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _selectedColor = -1;
   int activeIndex = 0;
   List productColorsList = [];
+  final List productSizes = [];
+  final List productDisplaySizes = [];
+  List recommedProduct = [];
+
   final CarouselController _carouselController = CarouselController();
+  @override
+  void initState() {
+    Provider.of<ProductsListViewModel>(context, listen: false)
+        .fetchProductsByCategory(widget.categoryId);
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     List Photos = widget.images;
@@ -41,6 +61,38 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      floatingActionButton: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        width: width,
+        height: 50,
+        decoration: BoxDecoration(),
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MainColors.PrimaryColor.withOpacity(0.4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {},
+            child: Row(
+              children: [
+                Spacer(),
+                Text(
+                  "Sign in",
+                  style: Text_Style.textStyleBold(Colors.white, 20),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Icon(
+                  Iconsax.login,
+                  color: Colors.white,
+                ),
+                Spacer()
+              ],
+            )),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Stack(
         children: [
           Container(
@@ -247,7 +299,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               height: 10,
                             ),
                             Container(
-                              padding: EdgeInsets.only(right: 20),
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               child: Text(
                                 widget.description,
                                 style: Text_Style.textStyleBold(
@@ -264,7 +319,49 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         .containsKey("size") &&
                                     widget.productVariable[0]
                                         .containsKey("color")))
-                              buildColorsBar(width)
+                              buildColorsBar(width),
+                            Container(
+                              margin: EdgeInsets.only(top: 20),
+                              child: Text(
+                                "Recommend",
+                                style:
+                                    Text_Style.textStyleBold(Colors.black, 15),
+                              ),
+                            ),
+                            Container(
+                              width: width,
+                              child: MasonryGridView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: Provider.of<ProductsListViewModel>(
+                                          context)
+                                      .productsList
+                                      .length,
+                                  gridDelegate:
+                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2),
+                                  itemBuilder: (context, index) {
+                                    ////////////////////////////////////////////////
+                                    ///////////////////////////////////////
+                                    /////////////////////////////////
+                                    //////////////////////////////
+                                    var product =
+                                        Provider.of<ProductsListViewModel>(
+                                                context)
+                                            .productsList[0];
+                                    if (product.productId == widget.id) {
+                                      print(product.categoryId);
+                                    }
+                                    return ProductCard(
+                                        title: product.productNameEn,
+                                        UrlImage: product.images[0],
+                                        ImagesList: product.images,
+                                        index: index,
+                                        price: product.price,
+                                        productDetails: product,
+                                        categoryId: product.categoryId);
+                                  }),
+                            )
                           ],
                         ),
                       ),
@@ -285,11 +382,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     if (!widget.productVariable[0].containsKey("size")) {
       changeColors();
     }
-    print("trueeeedsfasdfa");
 
     return Container(
       margin: EdgeInsets.only(
-        top: 10,
+        top: 20,
       ),
       width: width,
       height: 70,
@@ -326,36 +422,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ]
                               : [],
                           borderRadius: BorderRadius.all(
-                            Radius.circular(10),
+                            Radius.circular(100),
                           ),
                         ),
-                        height: 50,
-                        width: 50,
+                        height: 30,
+                        width: 30,
                         child: Center(
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
-                            child: Text(
-                              productColorsList[index].toString().toUpperCase(),
-                              style: Text_Style.textStyleBold(Colors.white, 20),
-                            ),
                           ),
                         ),
                       ),
                       AnimatedSwitcher(
-                        duration: Duration(milliseconds: 500),
+                        duration: Duration(milliseconds: 300),
                         child: _selectedColor == index
                             ? Container(
                                 margin: EdgeInsets.only(top: 5),
                                 key: ValueKey<int>(index),
                                 height: 5,
-                                width: 50,
+                                width: 25,
                                 color: getColorFromString(
                                     productColorsList[index]),
                               )
                             : Container(
                                 key: ValueKey<int>(-1),
                                 height: 5,
-                                width: 50,
+                                width: 25,
                                 color: Colors.transparent,
                               ),
                       )
@@ -373,6 +465,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Container buildSizeBar(
     double width,
   ) {
+    productSizes.clear();
+    for (int i = 0; i < widget.productVariable.length; i++) {
+      productSizes.add(widget.productVariable[i]["size"]);
+      if (!productDisplaySizes.contains(widget.productVariable[i]["size"])) {
+        productDisplaySizes.add(widget.productVariable[i]["size"]);
+      }
+    }
     return Container(
       margin: EdgeInsets.only(
         top: 10,
@@ -384,16 +483,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
-          itemCount: widget.productVariable.length,
+          itemCount: productDisplaySizes.length,
           itemBuilder: (BuildContext context, int index) {
             return Stack(
               children: [
                 InkResponse(
                   onTap: () {
                     setState(() {
-                      changeColorWithSize(
-                          widget.productVariable[index]["size"]);
+                      changeColorWithSize(productSizes[index].toString());
                       _selectedSize = index;
+                      _selectedColor = -1;
                     });
                   },
                   child: Column(
@@ -422,7 +521,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         width: 50,
                         child: Center(
                           child: Text(
-                            widget.productVariable[index]["size"]
+                            productDisplaySizes[index]
                                 .toString()
                                 .replaceAll("uk", "")
                                 .toUpperCase(),
@@ -479,9 +578,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void changeColorWithSize(String size) {
     productColorsList = [];
-    for (int i = 0; i < widget.productVariable.length; i++) {
-      if (widget.productVariable[i]["size"] == size) {
-        productColorsList.add(widget.productVariable[i]["color"]);
+    for (int i = 0; i < productSizes.length; i++) {
+      if (productSizes[i] == size) {
+        productColorsList.add(widget.productVariable[i]["color"].toString());
       }
     }
   }

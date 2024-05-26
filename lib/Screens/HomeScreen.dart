@@ -120,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     CategoriesBar(width),
                     Expanded(
                       child: Container(
+                        padding: EdgeInsets.all(10),
                         child: FutureBuilder(
                             future: _futureProducts,
                             builder: (context, snapshot) {
@@ -161,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         index: index,
                                         price: product.price,
                                         productDetails: product,
+                                        categoryId: product.categoryId,
                                       );
                                     }),
                               );
@@ -323,20 +325,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
-  // Widget buildIndicator(int length) {
-  //   return AnimatedSmoothIndicator(
-  //     activeIndex: activeIndex,
-  //     count: length,
-  //     effect: WormEffect(
-  //       activeDotColor: Colors.blue,
-  //       dotColor: Colors.grey,
-  //       dotHeight: 5,
-  //       dotWidth: 5,
-  //       spacing: 5,
-  //     ),
-  //   );
-  // }
 
   void changeColorOfButtonn(int index) {
     setState(() {

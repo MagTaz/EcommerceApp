@@ -26,7 +26,7 @@ class _EmptyProductsAnimationWidgetState
               fit: BoxFit.cover,
             ),
             Text(
-              "There is products in this category",
+              "There is no products in this category",
               style: Text_Style.textStyleBold(
                   MainColors.PrimaryColor.withOpacity(0.5), 20),
             )
