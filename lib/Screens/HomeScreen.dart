@@ -79,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (Photos.length != 0) {
                           return Container(
                             margin: EdgeInsets.all(10),
+                            width: width,
                             height: height / 4.5,
                             decoration: BoxDecoration(
                                 borderRadius:
@@ -111,9 +112,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           );
-                        } else {
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(
                               child: const CircularProgressIndicator());
+                        } else {
+                          return Container();
                         }
                       },
                     ),

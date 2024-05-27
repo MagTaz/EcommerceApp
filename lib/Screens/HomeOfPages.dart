@@ -1,6 +1,9 @@
+import 'package:ecommerce_app/Screens/CartScreen.dart';
 import 'package:ecommerce_app/Screens/HomeScreen.dart';
 import 'package:ecommerce_app/Screens/ProfileScreen.dart';
+import 'package:ecommerce_app/Screens/SettingsScreen.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
+import 'package:ecommerce_app/generated/l10n.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +18,12 @@ class HomeOfPages extends StatefulWidget {
 class _HomeOfPagesState extends State<HomeOfPages> {
   int _selectedIndex = 0;
 
-  List Pages = [const HomeScreen(), const ProfileScreen()];
+  List Pages = [
+    const HomeScreen(),
+    const ProfileScreen(),
+    CartScreen(),
+    SettingsScreen()
+  ];
   int indexOfPhoto = 0;
   int activeIndex = 0;
   @override
@@ -29,13 +37,13 @@ class _HomeOfPagesState extends State<HomeOfPages> {
           onDestinationSelected: _onItemTapped,
           shadowColor: Colors.black,
           elevation: 30,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(
                 Iconsax.shop,
                 color: Colors.black,
               ),
-              label: "Shop",
+              label: S.of(context).ShopAppBar,
               selectedIcon: Icon(
                 Iconsax.shop5,
                 color: Colors.white,

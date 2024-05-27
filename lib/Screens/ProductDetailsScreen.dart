@@ -43,19 +43,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   List productColorsList = [];
   final List productSizes = [];
   final List productDisplaySizes = [];
-  List recommedProduct = [];
+  late Future _futureProducts;
 
   final CarouselController _carouselController = CarouselController();
+
   @override
   void initState() {
-    Provider.of<ProductsListViewModel>(context, listen: false)
-        .fetchProductsByCategory(widget.categoryId);
     // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _futureProducts = Provider.of<ProductsListViewModel>(context, listen: false)
+        .fetchRecommendProducts(widget.categoryId);
+    final List _recommendList =
+        Provider.of<ProductsListViewModel>(context).recommendList;
     List Photos = widget.images;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -68,7 +71,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         decoration: BoxDecoration(),
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: MainColors.PrimaryColor.withOpacity(0.4),
+              backgroundColor: MainColors.PrimaryColor.withOpacity(0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -78,14 +81,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               children: [
                 Spacer(),
                 Text(
-                  "Sign in",
+                  "add to cart",
                   style: Text_Style.textStyleBold(Colors.white, 20),
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Icon(
-                  Iconsax.login,
+                  Iconsax.shopping_cart,
                   color: Colors.white,
                 ),
                 Spacer()
@@ -322,45 +325,62 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               buildColorsBar(width),
                             Container(
                               margin: EdgeInsets.only(top: 20),
-                              child: Text(
-                                "Recommend",
-                                style:
-                                    Text_Style.textStyleBold(Colors.black, 15),
-                              ),
+                              child: Provider.of<ProductsListViewModel>(context)
+                                      .recommendList
+                                      .isEmpty
+                                  ? Container()
+                                  : Text(
+                                      "Recommend",
+                                      style: Text_Style.textStyleBold(
+                                          Colors.black, 15),
+                                    ),
                             ),
-                            Container(
-                              width: width,
-                              child: MasonryGridView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: Provider.of<ProductsListViewModel>(
-                                          context)
-                                      .productsList
-                                      .length,
-                                  gridDelegate:
-                                      SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2),
-                                  itemBuilder: (context, index) {
-                                    ////////////////////////////////////////////////
-                                    ///////////////////////////////////////
-                                    /////////////////////////////////
-                                    //////////////////////////////
-                                    var product =
+                            FutureBuilder(
+                              future: _futureProducts,
+                              builder: (context, snapshot) {
+                                return Container(
+                                  width: width,
+                                  child: MasonryGridView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount:
                                         Provider.of<ProductsListViewModel>(
                                                 context)
-                                            .productsList[0];
-                                    if (product.productId == widget.id) {
-                                      print(product.categoryId);
-                                    }
-                                    return ProductCard(
-                                        title: product.productNameEn,
-                                        UrlImage: product.images[0],
-                                        ImagesList: product.images,
-                                        index: index,
-                                        price: product.price,
-                                        productDetails: product,
-                                        categoryId: product.categoryId);
-                                  }),
+                                            .recommendList
+                                            .length,
+                                    gridDelegate:
+                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2),
+                                    itemBuilder: (context, index) {
+                                      var recommendList =
+                                          Provider.of<ProductsListViewModel>(
+                                                  context)
+                                              .recommendList;
+                                      if (recommendList.isEmpty) {
+                                        return Center(
+                                          child: SpinKitSpinningLines(
+                                            color: MainColors.PrimaryColor,
+                                            size: 60,
+                                          ),
+                                        );
+                                      } else if (index < recommendList.length) {
+                                        var product = recommendList[index];
+                                        return ProductCard(
+                                          title: product.productNameEn,
+                                          UrlImage: product.images[0],
+                                          ImagesList: product.images,
+                                          index: index,
+                                          price: product.price,
+                                          productDetails: product,
+                                          categoryId: product.categoryId,
+                                        );
+                                      } else {
+                                        return SizedBox.shrink();
+                                      }
+                                    },
+                                  ),
+                                );
+                              },
                             )
                           ],
                         ),
