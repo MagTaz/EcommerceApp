@@ -4,7 +4,7 @@ import 'package:ecommerce_app/Model/Product.dart';
 import 'package:ecommerce_app/Model/Products.dart';
 import 'package:http/http.dart' as http;
 
-class ProducsApi {
+class ProductsApi {
   Future<List<Product>> fetchProducts() async {
     try {
       http.Response response = await http.get(Uri.parse(

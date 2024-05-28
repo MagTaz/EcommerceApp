@@ -1,5 +1,15 @@
 {
+    
     "ShopAppBar": "المتجر",
+    "CartAppBar" :"عربة التسوق",
+    "ProfileAppBar" :"الحساب",
+    "SettingsAppBar" : "الإعدادات",
+    "Search_TextField": "بحث",
+    "CategoryNameEnAr" : "categoryNameAr",
+    "ProductNameEnAr" : "productNameAr",
+    "productDescriptionEnAr": "productDescriptionAr",
+    "RecommendedProducts_ProductDetailsScreen" : "يوصي به",
+    "addToCartButton_ProductDetailsScreen": "اضف الى عربة التسوق",
     "ChangeLanguage" :"تغيير اللغة"
     
 }

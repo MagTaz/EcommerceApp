@@ -16,7 +16,7 @@ class _CategoriesCardState extends State<CategoriesCard> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.height;
+    // double width = MediaQuery.of(context).size.height;
     return Container(
       clipBehavior: Clip.hardEdge,
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),

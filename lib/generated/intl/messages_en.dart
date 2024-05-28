@@ -22,8 +22,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "CartAppBar": MessageLookupByLibrary.simpleMessage("Cart"),
+        "CategoryNameEnAr":
+            MessageLookupByLibrary.simpleMessage("categoryNameEn"),
         "ChangeLanguage":
             MessageLookupByLibrary.simpleMessage("Change Language"),
-        "ShopAppBar": MessageLookupByLibrary.simpleMessage("Shop")
+        "ProductNameEnAr":
+            MessageLookupByLibrary.simpleMessage("productNameEn"),
+        "ProfileAppBar": MessageLookupByLibrary.simpleMessage("Profile"),
+        "RecommendedProducts_ProductDetailsScreen":
+            MessageLookupByLibrary.simpleMessage("Recommedned"),
+        "Search_TextField": MessageLookupByLibrary.simpleMessage("Search"),
+        "SettingsAppBar": MessageLookupByLibrary.simpleMessage("Settings"),
+        "ShopAppBar": MessageLookupByLibrary.simpleMessage("Shop"),
+        "addToCartButton_ProductDetailsScreen":
+            MessageLookupByLibrary.simpleMessage("Add to cart"),
+        "productDescriptionEnAr":
+            MessageLookupByLibrary.simpleMessage("productDescriptionEn")
       };
 }

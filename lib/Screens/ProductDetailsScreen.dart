@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/Utils/Text_Style.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
+import 'package:ecommerce_app/generated/l10n.dart';
 import 'package:ecommerce_app/widgets/PorductCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -57,18 +57,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     _futureProducts = Provider.of<ProductsListViewModel>(context, listen: false)
         .fetchRecommendProducts(widget.categoryId);
-    final List _recommendList =
-        Provider.of<ProductsListViewModel>(context).recommendList;
+
     List Photos = widget.images;
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       floatingActionButton: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         width: width,
         height: 50,
-        decoration: BoxDecoration(),
+        decoration: const BoxDecoration(),
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: MainColors.PrimaryColor.withOpacity(0.5),
@@ -79,19 +78,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             onPressed: () {},
             child: Row(
               children: [
-                Spacer(),
+                const Spacer(),
                 Text(
-                  "add to cart",
+                  S().addToCartButton_ProductDetailsScreen,
                   style: Text_Style.textStyleBold(Colors.white, 20),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                Icon(
+                const Icon(
                   Iconsax.shopping_cart,
                   color: Colors.white,
                 ),
-                Spacer()
+                const Spacer()
               ],
             )),
       ),
@@ -102,7 +101,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             width: width,
             height: height / 2,
             clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
@@ -140,16 +139,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.5),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.only(bottom: 50),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20))),
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.only(bottom: 50),
                     child: buildIndicator(Photos.length),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
           Stack(
@@ -163,7 +163,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   builder: (BuildContext context,
                       ScrollController scrollController) {
                     return Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -177,13 +177,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           topRight: Radius.circular(30),
                         ),
                       ),
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       child: SingleChildScrollView(
                         controller: scrollController,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             Container(
@@ -200,17 +200,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     return Stack(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.all(8),
-                                          margin: EdgeInsets.all(10),
+                                          padding: const EdgeInsets.all(8),
+                                          margin: const EdgeInsets.all(10),
                                           decoration: BoxDecoration(
                                             color: MainColors.PrimaryColor,
-                                            borderRadius: BorderRadius.all(
+                                            borderRadius:
+                                                const BorderRadius.all(
                                               Radius.circular(10),
                                             ),
                                           ),
                                           height: 50,
                                           width: 50,
-                                          child: Center(
+                                          child: const Center(
                                             child: SpinKitSpinningLines(
                                               color: Colors.white,
                                             ),
@@ -226,8 +227,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           },
                                           child: Container(
                                             clipBehavior: Clip.hardEdge,
-                                            margin: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
+                                            margin: const EdgeInsets.all(10),
+                                            decoration: const BoxDecoration(
                                               boxShadow: [
                                                 BoxShadow(
                                                   blurRadius: 3,
@@ -249,11 +250,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ),
                                         if (index == activeIndex)
                                           Container(
-                                            margin: EdgeInsets.all(10),
+                                            margin: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               color: MainColors.PrimaryColor
                                                   .withOpacity(0.3),
-                                              borderRadius: BorderRadius.all(
+                                              borderRadius:
+                                                  const BorderRadius.all(
                                                 Radius.circular(10),
                                               ),
                                             ),
@@ -266,7 +268,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             Row(
@@ -279,10 +281,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Colors.black, 25),
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 Container(
                                   width: 80,
-                                  margin: EdgeInsets.all(20),
+                                  margin: const EdgeInsets.all(20),
                                   child: Center(
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
@@ -298,12 +300,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              padding: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
                               ),
                               child: Text(
@@ -324,13 +326,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         .containsKey("color")))
                               buildColorsBar(width),
                             Container(
-                              margin: EdgeInsets.only(top: 20),
+                              margin: const EdgeInsets.only(top: 20),
                               child: Provider.of<ProductsListViewModel>(context)
                                       .recommendList
                                       .isEmpty
                                   ? Container()
                                   : Text(
-                                      "Recommend",
+                                      S().RecommendedProducts_ProductDetailsScreen,
                                       style: Text_Style.textStyleBold(
                                           Colors.black, 15),
                                     ),
@@ -342,14 +344,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   width: width,
                                   child: MasonryGridView.builder(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount:
                                         Provider.of<ProductsListViewModel>(
                                                 context)
                                             .recommendList
                                             .length,
                                     gridDelegate:
-                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                        const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2),
                                     itemBuilder: (context, index) {
                                       var recommendList =
@@ -366,7 +369,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       } else if (index < recommendList.length) {
                                         var product = recommendList[index];
                                         return ProductCard(
-                                          title: product.productNameEn,
+                                          title: product.productName,
                                           UrlImage: product.images[0],
                                           ImagesList: product.images,
                                           index: index,
@@ -375,7 +378,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           categoryId: product.categoryId,
                                         );
                                       } else {
-                                        return SizedBox.shrink();
+                                        return const SizedBox.shrink();
                                       }
                                     },
                                   ),
@@ -404,7 +407,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
 
     return Container(
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
         top: 20,
       ),
       width: width,
@@ -427,37 +430,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         clipBehavior: Clip.hardEdge,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
                           color: getColorFromString(productColorsList[index]),
                           boxShadow: _selectedColor == index
                               ? [
-                                  BoxShadow(
+                                  const BoxShadow(
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     color: Colors.black26,
                                   ),
                                 ]
                               : [],
-                          borderRadius: BorderRadius.all(
+                          borderRadius: const BorderRadius.all(
                             Radius.circular(100),
                           ),
                         ),
                         height: 30,
                         width: 30,
-                        child: Center(
+                        child: const Center(
                           child: FittedBox(
                             fit: BoxFit.scaleDown,
                           ),
                         ),
                       ),
                       AnimatedSwitcher(
-                        duration: Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 300),
                         child: _selectedColor == index
                             ? Container(
-                                margin: EdgeInsets.only(top: 5),
+                                margin: const EdgeInsets.only(top: 5),
                                 key: ValueKey<int>(index),
                                 height: 5,
                                 width: 25,
@@ -465,7 +468,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     productColorsList[index]),
                               )
                             : Container(
-                                key: ValueKey<int>(-1),
+                                key: const ValueKey<int>(-1),
                                 height: 5,
                                 width: 25,
                                 color: Colors.transparent,
@@ -493,7 +496,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
     }
     return Container(
-      margin: EdgeInsets.only(
+      margin: const EdgeInsets.only(
         top: 10,
       ),
       width: width,
@@ -519,21 +522,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     children: [
                       Container(
                         clipBehavior: Clip.hardEdge,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
                           color: _selectedSize == index
                               ? MainColors.PrimaryColor
                               : MainColors.PrimaryColor.withOpacity(0.3),
                           boxShadow: _selectedSize == index
                               ? [
-                                  BoxShadow(
+                                  const BoxShadow(
                                     blurRadius: 3,
                                     spreadRadius: 1,
                                     color: Colors.black26,
                                   ),
                                 ]
                               : [],
-                          borderRadius: BorderRadius.all(
+                          borderRadius: const BorderRadius.all(
                             Radius.circular(10),
                           ),
                         ),

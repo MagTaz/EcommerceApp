@@ -60,6 +60,96 @@ class S {
     );
   }
 
+  /// `Cart`
+  String get CartAppBar {
+    return Intl.message(
+      'Cart',
+      name: 'CartAppBar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get ProfileAppBar {
+    return Intl.message(
+      'Profile',
+      name: 'ProfileAppBar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get SettingsAppBar {
+    return Intl.message(
+      'Settings',
+      name: 'SettingsAppBar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get Search_TextField {
+    return Intl.message(
+      'Search',
+      name: 'Search_TextField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `categoryNameEn`
+  String get CategoryNameEnAr {
+    return Intl.message(
+      'categoryNameEn',
+      name: 'CategoryNameEnAr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `productNameEn`
+  String get ProductNameEnAr {
+    return Intl.message(
+      'productNameEn',
+      name: 'ProductNameEnAr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `productDescriptionEn`
+  String get productDescriptionEnAr {
+    return Intl.message(
+      'productDescriptionEn',
+      name: 'productDescriptionEnAr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recommedned`
+  String get RecommendedProducts_ProductDetailsScreen {
+    return Intl.message(
+      'Recommedned',
+      name: 'RecommendedProducts_ProductDetailsScreen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add to cart`
+  String get addToCartButton_ProductDetailsScreen {
+    return Intl.message(
+      'Add to cart',
+      name: 'addToCartButton_ProductDetailsScreen',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Change Language`
   String get ChangeLanguage {
     return Intl.message(

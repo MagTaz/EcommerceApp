@@ -2,12 +2,10 @@ import 'package:ecommerce_app/Model/Product.dart';
 import 'package:ecommerce_app/Screens/ProductDetailsScreen.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
 import 'package:ecommerce_app/Utils/Text_Style.dart';
-import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({
@@ -115,7 +113,7 @@ class _ProductCardState extends State<ProductCard> {
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                widget.price + " SAR",
+                                widget.price + " SR",
                                 style:
                                     Text_Style.textStyleBold(Colors.white, 13),
                               ),

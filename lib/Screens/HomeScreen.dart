@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce_app/Model/Product.dart';
+import 'package:ecommerce_app/Services/changeLanguage.dart';
 import 'package:ecommerce_app/Utils/Fonts.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
-import 'package:ecommerce_app/Utils/Text_Style.dart';
+import 'package:ecommerce_app/View_Model/CategoryListViewModel.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
+import 'package:ecommerce_app/generated/l10n.dart';
 import 'package:ecommerce_app/widgets/Categories_Card.dart';
 import 'package:ecommerce_app/widgets/EmptyProducsAnimationWidget.dart';
 import 'package:ecommerce_app/widgets/PorductCard.dart';
@@ -15,7 +17,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -39,12 +40,23 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> categories = [];
   List<dynamic> subCategories = [];
   late Future<List<Product>> products;
-
+  late String _languageCode;
+  late Future _futureCategoties;
   @override
   void initState() {
+    ChangeLanguage.getLanguage().then((value) {
+      _languageCode = value;
+      print(_languageCode);
+    });
+
     _futureProducts = Provider.of<ProductsListViewModel>(context, listen: false)
         .fetchProducts();
-    fetchData();
+    _futureCategoties =
+        Provider.of<CategoryListViewModel>(context, listen: false)
+            .fetchProducts();
+    categories = Provider.of<CategoryListViewModel>(context, listen: false)
+        .categoriesList;
+
     fetchBanners(context);
     super.initState();
   }
@@ -55,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
     double width = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: banners.isEmpty || categories.isEmpty
+      body: banners.isEmpty
           ? Center(
               child: SpinKitSpinningLines(
                 color: MainColors.PrimaryColor,
@@ -78,10 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, snapshot) {
                         if (Photos.length != 0) {
                           return Container(
-                            margin: EdgeInsets.all(10),
+                            margin: const EdgeInsets.all(10),
                             width: width,
                             height: height / 4.5,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20))),
                             child: Stack(
@@ -114,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         } else if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(
-                              child: const CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else {
                           return Container();
                         }
@@ -124,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     CategoriesBar(width),
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: FutureBuilder(
                             future: _futureProducts,
                             builder: (context, snapshot) {
@@ -140,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (Provider.of<ProductsListViewModel>(context)
                                   .productsList
                                   .isEmpty) {
-                                return EmptyProductsAnimationWidget();
+                                return const EmptyProductsAnimationWidget();
                               }
                               return Container(
                                 child: MasonryGridView.builder(
@@ -151,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .productsList
                                             .length,
                                     gridDelegate:
-                                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                        const SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                             crossAxisCount: 2),
                                     itemBuilder: (context, index) {
                                       var product =
@@ -160,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               .productsList[index];
 
                                       return ProductCard(
-                                        title: product.productNameEn,
+                                        title: product.productName,
                                         UrlImage: product.images[0],
                                         ImagesList: product.images,
                                         index: index,
@@ -180,82 +192,95 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container CategoriesBar(double width) {
-    return Container(
-      height: 80,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            width: width / 2.5,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length + 1,
-              itemBuilder: (BuildContext context, int index) {
-                if (index == 0) {
-                  return InkWell(
-                    onTap: () {
-                      changeProductsList(index, "");
-                      changeColorOfButtonn(index);
-                    },
-                    child: CategoriesCard(
-                      ColorOfButton:
-                          activeButton == index ? Colors.white : Colors.black45,
-                      title: "All",
-                    ),
-                  );
-                } else {
-                  int categoryIndex = index - 1;
-                  return InkWell(
-                    onTap: () {
-                      if (activeButton != index) {
-                        changeProductsList(
-                            index, categories[categoryIndex]["_id"]);
-                        setState(() {
-                          activeSubButton = 0;
-                        });
-                      }
-                      changeColorOfButtonn(index);
+  CategoriesBar(double width) {
+    return FutureBuilder(
+        future: _futureCategoties,
+        builder: (context, snapshot) {
+          if (Provider.of<CategoryListViewModel>(context)
+              .categoriesList
+              .isEmpty) {
+            return Container();
+          }
+          return Container(
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  width: width / 2.5,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: Provider.of<CategoryListViewModel>(context)
+                        .categoriesList
+                        .length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var categoryDetails = Provider.of<CategoryListViewModel>(
+                              context,
+                              listen: false)
+                          .categoriesList[index];
 
-                      fetchSubCategoriesData(
-                          categoryIndex,
-                          categories[categoryIndex]['categoryNameEn']
-                              .toString());
-                      if (subCategories.length != 0) {
-                        _showModalBottomSheet(
-                            context,
-                            categories[categoryIndex]['categoryNameEn']
-                                .toString(),
-                            index);
+                      if (index == 0) {
+                        return InkWell(
+                          onTap: () {
+                            changeProductsList(index, "");
+                            changeColorOfButtonn(index);
+                          },
+                          child: CategoriesCard(
+                            ColorOfButton: activeButton == index
+                                ? Colors.white
+                                : Colors.black45,
+                            title: "All",
+                          ),
+                        );
+                      } else {
+                        int categoryIndex = index - 1;
+                        return InkWell(
+                          onTap: () {
+                            if (activeButton != index) {
+                              changeProductsList(
+                                  index, categoryDetails.categoryId);
+                              setState(() {
+                                activeSubButton = 0;
+                              });
+                            }
+                            changeColorOfButtonn(index);
+
+                            fetchSubCategoriesData(
+                                categoryIndex, categoryDetails.categoryName);
+                            if (subCategories.length != 0) {
+                              _showModalBottomSheet(
+                                  context, categoryDetails.categoryName, index);
+                            }
+                          },
+                          child: CategoriesCard(
+                            ColorOfButton: activeButton == index
+                                ? Colors.white
+                                : Colors.black45,
+                            title: categoryDetails.categoryName,
+                          ),
+                        );
                       }
                     },
-                    child: CategoriesCard(
-                      ColorOfButton:
-                          activeButton == index ? Colors.white : Colors.black45,
-                      title: categories[categoryIndex]['categoryNameEn']
-                          .toString(),
-                    ),
-                  );
-                }
-              },
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 9, horizontal: 2),
+                  width: 1.2,
+                  color: MainColors.PrimaryColor,
+                ),
+                IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.list_sharp,
+                      size: 30,
+                      color: MainColors.PrimaryColor,
+                    ))
+              ],
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 9, horizontal: 2),
-            width: 1.2,
-            color: MainColors.PrimaryColor,
-          ),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.list_sharp,
-                size: 30,
-                color: MainColors.PrimaryColor,
-              ))
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Row SearchAppBar() {
@@ -276,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )),
         Expanded(
           child: Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
               height: 40,
               child: TextField(
                 style: TextStyle(
@@ -284,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.black.withOpacity(0.7),
                     fontFamily: Fonts.PrimaryFont),
                 decoration: InputDecoration(
-                    labelText: "Search",
+                    labelText: S.of(context).Search_TextField,
                     prefixIconColor: Colors.white,
                     labelStyle: TextStyle(
                       fontFamily: "CairoBold",
@@ -292,30 +317,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: MainColors.PrimaryColor.withOpacity(0.2),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomLeft: Radius.circular(10)),
-                    ),
+                        borderRadius: _languageCode == "en"
+                            ? const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10))
+                            : const BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10))),
                     focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            bottomLeft: Radius.circular(10)),
+                        borderRadius: _languageCode == "en"
+                            ? const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10))
+                            : const BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
                         borderSide: BorderSide(
                           color: MainColors.PrimaryColor,
                         ))),
               )),
         ),
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: 50,
           height: 40,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10),
-                bottomRight: Radius.circular(10)),
+            borderRadius: _languageCode == "en"
+                ? const BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10))
+                : const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10)),
             color: MainColors.PrimaryColor,
           ),
-          child: Icon(
+          child: const Icon(
             Icons.search,
             color: Colors.white,
           ),
@@ -376,10 +412,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildImage(urlimage, int index) {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       child: Container(
         clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           boxShadow: [
             BoxShadow(blurRadius: 10, spreadRadius: 5, color: Colors.black26)
           ],
@@ -399,29 +435,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> fetchData() async {
-    final response = await http.get(Uri.parse(
-        'https://e-commerce-backend-sable.vercel.app/api/v1/admin/category-sub-category'));
-    try {
-      if (response.statusCode == 200) {
-        setState(() {
-          data = json.decode(response.body);
-          categories = data["categories"];
-        });
-      } else {
-        Map<String, dynamic> error = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(error["message"]),
-          ),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   Future fetchBanners(BuildContext context) async {
     final responseOfBanners = await http.get(Uri.parse(
         'https://e-commerce-backend-sable.vercel.app/api/v1/user/banner'));
@@ -436,13 +449,14 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       return banners["result"];
     } catch (e) {
-      Map<String, dynamic> error = json.decode(responseOfBanners.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(error["message"]),
-        ),
-      );
+      print(e);
+      // Map<String, dynamic> error = json.decode(responseOfBanners.body);
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: Colors.red,
+      //     content: Text(error["message"]),
+      //   ),
+      // );
     }
   }
 
@@ -461,15 +475,16 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: 10),
                 child: Text(
                   Category,
-                  style: TextStyle(fontSize: 25, fontFamily: "CairoBold"),
+                  style: const TextStyle(fontSize: 25, fontFamily: "CairoBold"),
                 ),
               ),
               Container(
                 height: 100,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: Container(
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,

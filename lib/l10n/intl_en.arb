@@ -1,4 +1,13 @@
 {
     "ShopAppBar": "Shop",
+    "CartAppBar" :"Cart",
+    "ProfileAppBar" :"Profile",
+    "SettingsAppBar" : "Settings",
+    "Search_TextField": "Search",
+    "CategoryNameEnAr" : "categoryNameEn",
+    "ProductNameEnAr" : "productNameEn",
+    "productDescriptionEnAr": "productDescriptionEn",
+    "RecommendedProducts_ProductDetailsScreen" : "Recommedned",
+    "addToCartButton_ProductDetailsScreen": "Add to cart",
     "ChangeLanguage" :"Change Language"
 }

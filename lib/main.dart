@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:ecommerce_app/Screens/HomeOfPages.dart';
+import 'package:ecommerce_app/Services/changeLanguage.dart';
 import 'package:ecommerce_app/Utils/MainColors.dart';
+import 'package:ecommerce_app/View_Model/CategoryListViewModel.dart';
 import 'package:ecommerce_app/View_Model/ProductsListViewModel.dart';
 import 'package:ecommerce_app/generated/l10n.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,9 +17,20 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'widgets/Categories_Card.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider<ProductsListViewModel>(
-      create: (BuildContext context) => ProductsListViewModel(),
-      child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ProductsListViewModel>(
+          create: (BuildContext context) => ProductsListViewModel(),
+        ),
+        ChangeNotifierProvider<CategoryListViewModel>(
+          create: (BuildContext context) => CategoryListViewModel(),
+        ),
+        // Add other providers here as needed
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -33,6 +46,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _locale = "en";
+  @override
+  void initState() {
+    ChangeLanguage.getLanguage().then((value) {
+      setState(() {
+        _locale = value;
+      });
+
+      print(_locale + " *****************");
+    });
+    super.initState();
+  }
+
   setLocale(String locale) {
     setState(() {
       _locale = locale;

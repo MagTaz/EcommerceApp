@@ -1,5 +1,3 @@
-import 'package:ecommerce_app/Model/Product.dart';
-
 class ProductsList {
   final List<dynamic> products;
 

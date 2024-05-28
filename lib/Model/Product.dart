@@ -1,8 +1,7 @@
-import 'dart:convert';
+import 'package:ecommerce_app/generated/l10n.dart';
 
 class Product {
-  final String productNameAr;
-  final String productNameEn;
+  final String productName;
   final String price;
   final String categoryId;
   final List<dynamic> images;
@@ -12,8 +11,7 @@ class Product {
   final List productVariable;
 
   Product(
-      {required this.productNameAr,
-      required this.productNameEn,
+      {required this.productName,
       required this.price,
       required this.categoryId,
       required this.images,
@@ -24,14 +22,13 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> jsonData) {
     return Product(
-        productNameAr: jsonData["productNameAr"],
-        productNameEn: jsonData["productNameEn"],
+        productName: jsonData[S().ProductNameEnAr],
         price: jsonData["price"],
         categoryId: jsonData["categoryId"],
         images: jsonData["images"],
         isProductVariable: jsonData["isProductVariable"],
         productId: jsonData["_id"],
-        productDescriptionEn: jsonData["productDescriptionEn"],
+        productDescriptionEn: jsonData[S().productDescriptionEnAr],
         productVariable: jsonData["productVariable"]);
   }
 }

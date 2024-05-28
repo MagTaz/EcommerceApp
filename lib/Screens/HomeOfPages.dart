@@ -20,9 +20,9 @@ class _HomeOfPagesState extends State<HomeOfPages> {
 
   List Pages = [
     const HomeScreen(),
+    const CartScreen(),
     const ProfileScreen(),
-    CartScreen(),
-    SettingsScreen()
+    const SettingsScreen()
   ];
   int indexOfPhoto = 0;
   int activeIndex = 0;
@@ -39,36 +39,36 @@ class _HomeOfPagesState extends State<HomeOfPages> {
           elevation: 30,
           destinations: [
             NavigationDestination(
-              icon: Icon(
+              icon: const Icon(
                 Iconsax.shop,
                 color: Colors.black,
               ),
               label: S.of(context).ShopAppBar,
-              selectedIcon: Icon(
+              selectedIcon: const Icon(
                 Iconsax.shop5,
                 color: Colors.white,
               ),
             ),
             NavigationDestination(
-              icon: Icon(Iconsax.shopping_cart),
-              label: "Cart",
-              selectedIcon: Icon(
+              icon: const Icon(Iconsax.shopping_cart),
+              label: S.of(context).CartAppBar,
+              selectedIcon: const Icon(
                 Iconsax.shopping_cart5,
                 color: Colors.white,
               ),
             ),
             NavigationDestination(
-              icon: Icon(Iconsax.user),
-              label: "Profile",
-              selectedIcon: Icon(
+              icon: const Icon(Iconsax.user),
+              label: S.of(context).ProfileAppBar,
+              selectedIcon: const Icon(
                 Iconsax.user,
                 color: Colors.white,
               ),
             ),
             NavigationDestination(
-              icon: Icon(Iconsax.setting_2),
-              label: "Settings",
-              selectedIcon: Icon(Iconsax.setting),
+              icon: const Icon(Iconsax.setting_2),
+              label: S.of(context).SettingsAppBar,
+              selectedIcon: const Icon(Iconsax.setting),
             ),
           ],
         ),
